@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GameStore.Domain;
+﻿namespace GameStore.Domain;
 
 public class Order
 {
     public int Id { get; set; }
     public IEnumerable<Product> Products { get; set; }
-    public Box BoxId { get; set; }
+    public int BoxId { get; set; }
+    public Box Box { get; set; }
 }

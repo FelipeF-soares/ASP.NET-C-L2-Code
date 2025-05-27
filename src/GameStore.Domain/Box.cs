@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace GameStore.Domain;
 
-public class Box
+public class Box : Dimensions
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public Dimensions Dimensions { get; set; }
 }

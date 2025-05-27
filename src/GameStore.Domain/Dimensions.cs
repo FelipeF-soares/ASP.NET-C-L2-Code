@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GameStore.Domain
 {
-    public class Dimensions
+    public abstract class Dimensions
     {
         public decimal Width { get; set; }
         public decimal Height { get; set; }
