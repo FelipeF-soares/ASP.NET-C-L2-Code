@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Domain
+namespace GameStore.Domain;
+
+public abstract class Dimensions
 {
-    public abstract class Dimensions
-    {
-        public decimal Width { get; set; }
-        public decimal Height { get; set; }
-        public decimal Depth { get; set; }
-    }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int Depth { get; set; }
 }

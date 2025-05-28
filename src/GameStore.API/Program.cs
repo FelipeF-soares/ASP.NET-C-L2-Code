@@ -1,4 +1,8 @@
+using GameStore.Application.Services;
+using GameStore.Application.Services.Interfaces;
 using GameStore.Infrastructure.ApplicationContext;
+using GameStore.Infrastructure.GameStorePersistence;
+using GameStore.Infrastructure.GameStorePersistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +14,10 @@ builder.Services.AddDbContext<GameStoreDbContext>
     (
         options => options.UseSqlServer(connectionString)
     );
+builder.Services.AddScoped<IGameStoreGeneralPersist, GameStoreGeneralPersist>();
+builder.Services.AddScoped<IGameStoreOrderPersist, GameStoreOrderPersist>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

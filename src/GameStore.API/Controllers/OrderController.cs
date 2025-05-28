@@ -1,3 +1,6 @@
+using GameStore.Application.DTOS;
+using GameStore.Application.Services;
+using GameStore.Application.Services.Interfaces;
 using GameStore.Infrastructure.ApplicationContext;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,17 +10,35 @@ namespace GameStore.API.Controllers;
 [Route("[controller]")]
 public class OrderController : ControllerBase
 {
-    private readonly GameStoreDbContext dbContext;
+    private readonly IOrderService orderService;
 
-    public OrderController(GameStoreDbContext dbContext)
+    public OrderController(IOrderService orderService)
     {
-        this.dbContext = dbContext;
+        this.orderService = orderService;
     }
+
     [HttpGet]
     public IActionResult Get()
     {
-        var boxes = dbContext.Boxes;
-
-        return Ok(boxes);
+        return Ok();
+    }
+    [HttpPost("Pedidos")]
+    public async Task<IActionResult> Post([FromBody] OrderRequest request)
+    {
+        try
+        {
+            var orders = OrderValid.IsValid(request);
+            foreach(var order in orders)
+            {
+                await orderService.AddOrder(order);
+            }
+            return Ok();
+        }
+        catch (Exception)
+        {
+            return this.StatusCode(StatusCodes
+                           .Status500InternalServerError,
+                           $"Erro ao tentar inserir");
+        }
     }
 }
