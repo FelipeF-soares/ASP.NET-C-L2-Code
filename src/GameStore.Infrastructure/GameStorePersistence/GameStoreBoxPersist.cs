@@ -20,7 +20,7 @@ public class GameStoreBoxPersist : IGameStoreBoxPersist
     }
     public Task<Box[]> GetAllBoxesAsync()
     {
-        IQueryable<Box> query = context.Boxes.AsNoTracking();
+        IQueryable<Box> query = context.Boxes;
         
         return query.ToArrayAsync();
     }

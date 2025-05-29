@@ -20,12 +20,49 @@ public class BoxService : IBoxService
         try
         {
            var boxes = await boxPersist.GetAllBoxesAsync();
-           for(int i = 0; i < orders.Count; i++)
+            var listOrders = new List<Order>();
+            
+            foreach (var order in orders)
             {
-                var box = GetBestBox(orders[i], boxes);
-                if (box != null) orders[i].BoxId = box.Id;
+                var listBox = new List<Box>();
+                var box = await GetBestBox(order, boxes);
+                if (box != null)
+                {
+                    listBox.Add(box);
+                    order.Boxes = listBox;
+                    listOrders.Add(order);
+                }
+                else
+                {
+                    var itens = order.Products.Count;
+                    if (itens <= 1)
+                    {
+                        listBox.Add(box);
+                        order.Boxes = listBox;
+                        listOrders.Add(order);
+                    }
+                    else
+                    {
+                        var firstPart = order.Products.Take(itens / 2).ToList();
+                        var firstOrder = new Order();
+                        firstOrder.Products = firstPart;
+                        var secondPart = order.Products.Skip(itens / 2).ToList();
+                        var secondOrder = new Order();
+
+                        firstOrder.Products = secondPart;
+                        box = await GetBestBox(firstOrder, boxes);
+                        listBox.Add(box);
+                        order.Boxes = listBox;
+                        listOrders.Add(order);
+
+                        box = await GetBestBox(secondOrder, boxes);
+                        listBox.Add(box);
+                        order.Boxes = listBox;
+                        listOrders.Add(order);
+                    }
+                }
             }
-            return orders;
+            return listOrders;
         }
         catch (Exception)
         {
@@ -33,7 +70,7 @@ public class BoxService : IBoxService
         }
     }
 
-    private Box GetBestBox(Order orderDimension, Box[] boxes)
+    private async Task<Box> GetBestBox(Order orderDimension, Box[] boxes)
     {
         Dimensions dimensions = new Dimensions();
         dimensions.Width = orderDimension.Width;
@@ -41,9 +78,7 @@ public class BoxService : IBoxService
         dimensions.Depth = orderDimension.Depth;
         dimensions.Volume = orderDimension.Volume;
 
-        var emptyBox = new Box();
-        emptyBox.Name = "null";
-        emptyBox.Id = 99;
+        var emptyBox = await boxPersist.GetBoxByIdAsync(99);
         foreach (var box in boxes.OrderBy(b => b.Volume))
         {
             Dimensions dimensionsBox = new Dimensions();

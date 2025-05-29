@@ -37,7 +37,7 @@ public class OrderController : ControllerBase
         {
             var orders = OrdersDTO.IsValid(input);
             var ordersbox = await boxService.BoxOrder(orders);
-            foreach (var order in ordersbox)
+            foreach (var order in orders)
             {
                 await  orderService.AddOrder(order);
             }

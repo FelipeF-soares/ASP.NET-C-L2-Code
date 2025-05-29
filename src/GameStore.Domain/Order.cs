@@ -3,8 +3,7 @@
 public class Order : Dimensions
 {
     public int Id { get; set; }
+    public int OrdersId { get; set; }
     public List<Product> Products { get; set; }
-    public int? BoxId { get; set; }
-    public Box Box { get; set; }
-
+    public ICollection<Box> Boxes { get; set; }
 }

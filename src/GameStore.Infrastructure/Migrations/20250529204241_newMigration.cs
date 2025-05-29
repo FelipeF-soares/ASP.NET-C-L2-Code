@@ -7,7 +7,7 @@
 namespace GameStore.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class StoreGameMigration : Migration
+    public partial class newMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,8 +33,9 @@ namespace GameStore.Infrastructure.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    BoxId = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrdersId = table.Column<int>(type: "int", nullable: false),
                     Width = table.Column<int>(type: "int", nullable: false),
                     Height = table.Column<int>(type: "int", nullable: false),
                     Depth = table.Column<int>(type: "int", nullable: false),
@@ -43,11 +44,30 @@ namespace GameStore.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BoxOrder",
+                columns: table => new
+                {
+                    BoxesId = table.Column<int>(type: "int", nullable: false),
+                    OrdersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BoxOrder", x => new { x.BoxesId, x.OrdersId });
                     table.ForeignKey(
-                        name: "FK_Orders_Boxes_BoxId",
-                        column: x => x.BoxId,
+                        name: "FK_BoxOrder_Boxes_BoxesId",
+                        column: x => x.BoxesId,
                         principalTable: "Boxes",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BoxOrder_Orders_OrdersId",
+                        column: x => x.OrdersId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,7 +76,7 @@ namespace GameStore.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductsId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     Width = table.Column<int>(type: "int", nullable: false),
                     Height = table.Column<int>(type: "int", nullable: false),
@@ -86,9 +106,9 @@ namespace GameStore.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_BoxId",
-                table: "Orders",
-                column: "BoxId");
+                name: "IX_BoxOrder_OrdersId",
+                table: "BoxOrder",
+                column: "OrdersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_OrderId",
@@ -100,13 +120,16 @@ namespace GameStore.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BoxOrder");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Boxes");
 
             migrationBuilder.DropTable(
-                name: "Boxes");
+                name: "Orders");
         }
     }
 }

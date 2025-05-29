@@ -1,9 +1,4 @@
 ﻿using GameStore.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameStore.Application.DTOS.Output;
 
@@ -16,20 +11,24 @@ public static class PedidoDTO
         foreach(var order in orders)
         {
             var pedido = new PedidosOutputDTO();
-            pedido.pedido_id = order.Id;
+            pedido.pedido_id = order.OrdersId;
             var listCaixa = new List<CaixasOutputDTO>();
             var listProdutos = new List<ProdutosOutputDTO>();
-            var caixas = new CaixasOutputDTO();
-            caixas.caixa_id = order.Box.Name;
-            foreach (var produto in order.Products)
+
+            foreach(var box in order.Boxes)
             {
-                var produtoDTO = new ProdutosOutputDTO();
-                produtoDTO.Nome = produto.ProductName;
-                listProdutos.Add(produtoDTO);
+                var caixaDTO = new CaixasOutputDTO();
+                
+                caixaDTO.caixa_id = box.Name;
+                foreach(var product in order.Products)
+                {
+                    var produtoDTO = new ProdutosOutputDTO();
+                    produtoDTO.Nome = product.ProductsId;
+                    listProdutos.Add(produtoDTO);
+                }
+                caixaDTO.produtos = listProdutos;
+                listCaixa.Add(caixaDTO);
             }
-            caixas.produtos = listProdutos;
-            listCaixa.Add(caixas);
-            
             pedido.caixas = listCaixa;
             listPedidosDto.Add(pedido);
         }
