@@ -17,6 +17,7 @@ public class GameStoreOrderPersist : IGameStoreOrderPersist
     {
         IQueryable<Order> query = context.Orders
                                          .Include(order => order.Products)
+                                         .Include(order => order.Box)
                                          .AsNoTracking();
         return await query.ToArrayAsync();
     }
@@ -26,6 +27,7 @@ public class GameStoreOrderPersist : IGameStoreOrderPersist
         IQueryable<Order> query = context.Orders
                                          .Where(order => order.Id == orderId)
                                          .Include(order => order.Products)
+                                         .Include(order => order.Box)
                                          .AsNoTracking();
         return await query.FirstAsync();
     }

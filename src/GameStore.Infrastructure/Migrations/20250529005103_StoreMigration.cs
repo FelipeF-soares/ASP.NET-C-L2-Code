@@ -7,7 +7,7 @@
 namespace GameStore.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class newGameMigration : Migration
+    public partial class StoreMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,9 +19,10 @@ namespace GameStore.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<int>(type: "int", nullable: false),
-                    Depth = table.Column<int>(type: "int", nullable: false)
+                    Dimensions_Width = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Height = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Depth = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Volume = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,11 +33,21 @@ namespace GameStore.Infrastructure.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    BoxId = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Width = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Height = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Depth = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Volume = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Boxes_BoxId",
+                        column: x => x.BoxId,
+                        principalTable: "Boxes",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -47,9 +58,10 @@ namespace GameStore.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<int>(type: "int", nullable: false),
-                    Depth = table.Column<int>(type: "int", nullable: false)
+                    Dimensions_Width = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Height = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Depth = table.Column<int>(type: "int", nullable: true),
+                    Dimensions_Volume = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,13 +76,18 @@ namespace GameStore.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Boxes",
-                columns: new[] { "Id", "Depth", "Height", "Name", "Width" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, 80, 30, "Caixa 1", 40 },
-                    { 2, 40, 80, "Caixa 2", 50 },
-                    { 3, 60, 50, "Caixa 3", 80 }
+                    { 1, "Caixa 1" },
+                    { 2, "Caixa 2" },
+                    { 3, "Caixa 3" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_BoxId",
+                table: "Orders",
+                column: "BoxId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_OrderId",
@@ -82,13 +99,13 @@ namespace GameStore.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Boxes");
-
-            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Boxes");
         }
     }
 }

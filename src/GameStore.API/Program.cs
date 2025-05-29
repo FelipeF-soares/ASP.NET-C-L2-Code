@@ -16,8 +16,18 @@ builder.Services.AddDbContext<GameStoreDbContext>
     );
 builder.Services.AddScoped<IGameStoreGeneralPersist, GameStoreGeneralPersist>();
 builder.Services.AddScoped<IGameStoreOrderPersist, GameStoreOrderPersist>();
-builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IGameStoreBoxPersist, GameStoreBoxPersist>();
 
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IBoxService, BoxService>();
+
+builder.Services.AddControllers().AddNewtonsoftJson(
+       json => json.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

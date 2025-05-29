@@ -16,8 +16,14 @@ public class GameStoreGeneralPersist : IGameStoreGeneralPersist
         context.Add(entity);
     }
 
+
     public async Task<bool> SaveChangesAsync()
     {
         return await context.SaveChangesAsync() > 0;
+    }
+
+    public void Update<T>(T entity) where T : class
+    {
+        context.Update(entity);
     }
 }

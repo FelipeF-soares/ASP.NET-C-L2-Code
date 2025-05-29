@@ -1,8 +1,9 @@
-using GameStore.Application.DTOS;
-using GameStore.Application.Services;
+
 using GameStore.Application.Services.Interfaces;
-using GameStore.Infrastructure.ApplicationContext;
 using Microsoft.AspNetCore.Mvc;
+using GameStore.Application.DTOS.Input;
+
+
 
 namespace GameStore.API.Controllers;
 
@@ -11,26 +12,32 @@ namespace GameStore.API.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IOrderService orderService;
+    private readonly IBoxService boxService;
 
-    public OrderController(IOrderService orderService)
+    public OrderController(IOrderService orderService, IBoxService boxService)
     {
         this.orderService = orderService;
+        this.boxService = boxService;
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok();
+        var orders = await orderService.GetAllOrderAsync();
+        
+        return Ok(orders);
     }
+
     [HttpPost("Pedidos")]
-    public async Task<IActionResult> Post([FromBody] OrderRequest request)
+    public async Task<IActionResult> Post([FromBody] InputDTO input)
     {
         try
         {
-            var orders = OrderValid.IsValid(request);
-            foreach(var order in orders)
+            var orders = OrdersDTO.IsValid(input);
+            var ordersbox = await boxService.BoxOrder(orders);
+            foreach (var order in ordersbox)
             {
-                await orderService.AddOrder(order);
+                await  orderService.AddOrder(order);
             }
             return Ok();
         }
