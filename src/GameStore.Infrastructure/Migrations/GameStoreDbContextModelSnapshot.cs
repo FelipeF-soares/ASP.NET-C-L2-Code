@@ -30,9 +30,21 @@ namespace GameStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Depth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -42,17 +54,38 @@ namespace GameStore.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Caixa 1"
+                            Depth = 80,
+                            Height = 30,
+                            Name = "Caixa 1",
+                            Volume = 96000,
+                            Width = 40
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Caixa 2"
+                            Depth = 40,
+                            Height = 80,
+                            Name = "Caixa 2",
+                            Volume = 160000,
+                            Width = 50
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Caixa 3"
+                            Depth = 60,
+                            Height = 50,
+                            Name = "Caixa 3",
+                            Volume = 240000,
+                            Width = 80
+                        },
+                        new
+                        {
+                            Id = 99,
+                            Depth = 0,
+                            Height = 0,
+                            Name = "null",
+                            Volume = 0,
+                            Width = 0
                         });
                 });
 
@@ -62,6 +95,18 @@ namespace GameStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("BoxId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Depth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Width")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -79,12 +124,24 @@ namespace GameStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Depth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -93,70 +150,13 @@ namespace GameStore.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("GameStore.Domain.Box", b =>
-                {
-                    b.OwnsOne("GameStore.Domain.Dimensions", "Dimensions", b1 =>
-                        {
-                            b1.Property<int>("BoxId")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Depth")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Height")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Volume")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Width")
-                                .HasColumnType("int");
-
-                            b1.HasKey("BoxId");
-
-                            b1.ToTable("Boxes");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BoxId");
-                        });
-
-                    b.Navigation("Dimensions");
-                });
-
             modelBuilder.Entity("GameStore.Domain.Order", b =>
                 {
                     b.HasOne("GameStore.Domain.Box", "Box")
                         .WithMany()
                         .HasForeignKey("BoxId");
 
-                    b.OwnsOne("GameStore.Domain.Dimensions", "Dimensions", b1 =>
-                        {
-                            b1.Property<int>("OrderId")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Depth")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Height")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Volume")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Width")
-                                .HasColumnType("int");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
                     b.Navigation("Box");
-
-                    b.Navigation("Dimensions");
                 });
 
             modelBuilder.Entity("GameStore.Domain.Product", b =>
@@ -166,33 +166,6 @@ namespace GameStore.Infrastructure.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("GameStore.Domain.Dimensions", "Dimensions", b1 =>
-                        {
-                            b1.Property<int>("ProductId")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Depth")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Height")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Volume")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Width")
-                                .HasColumnType("int");
-
-                            b1.HasKey("ProductId");
-
-                            b1.ToTable("Products");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductId");
-                        });
-
-                    b.Navigation("Dimensions");
 
                     b.Navigation("Order");
                 });

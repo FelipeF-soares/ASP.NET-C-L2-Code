@@ -22,7 +22,7 @@ public class BoxService : IBoxService
            var boxes = await boxPersist.GetAllBoxesAsync();
            for(int i = 0; i < orders.Count; i++)
             {
-                var box = GetBestBox(orders[i].Dimensions, boxes);
+                var box = GetBestBox(orders[i], boxes);
                 if (box != null) orders[i].BoxId = box.Id;
             }
             return orders;
@@ -33,15 +33,29 @@ public class BoxService : IBoxService
         }
     }
 
-    private Box? GetBestBox(Dimensions orderDimension, Box[] boxes)
+    private Box GetBestBox(Order orderDimension, Box[] boxes)
     {
+        Dimensions dimensions = new Dimensions();
+        dimensions.Width = orderDimension.Width;
+        dimensions.Height = orderDimension.Width;
+        dimensions.Depth = orderDimension.Depth;
+        dimensions.Volume = orderDimension.Volume;
 
-        foreach (var box in boxes.OrderBy(b => b.Dimensions.Volume))
+        var emptyBox = new Box();
+        emptyBox.Name = "null";
+        emptyBox.Id = 99;
+        foreach (var box in boxes.OrderBy(b => b.Volume))
         {
-            if(box.Dimensions.Volume >= box.Dimensions.Volume)
-                if (FitsIn(orderDimension, box.Dimensions)) return box;
+            Dimensions dimensionsBox = new Dimensions();
+            dimensionsBox.Width = box.Width;
+            dimensionsBox.Height = box.Width;
+            dimensionsBox.Depth = box.Depth;
+            dimensionsBox.Volume = box.Volume;
+
+            if (FitsIn(orderDimension, dimensionsBox)) return box;
+
         }
-        return null;
+        return emptyBox;
     }
 
     public bool FitsIn(Dimensions other, Dimensions box)

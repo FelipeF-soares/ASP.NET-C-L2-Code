@@ -15,7 +15,6 @@ public class GameStoreDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Box>().OwnsOne(b => b.Dimensions);
 
         modelBuilder.Entity<Order>().Property(order => order.Id).ValueGeneratedNever();
 
@@ -32,28 +31,37 @@ public class GameStoreDbContext : DbContext
             {
                 Id = 1,
                 Name = "Caixa 1",
-                Dimensions_Height = 30,
-                Dimensions_Width = 40,
-                Dimensions_Depth = 80,
-                Dimensions_Volume = 96000
+                Height = 30,
+                Width = 40,
+                Depth = 80,
+                Volume = 96000
             },
             new
             {
                 Id = 2,
                 Name = "Caixa 2",
-                Dimensions_Height = 80,
-                Dimensions_Width = 50,
-                Dimensions_Depth = 40,
-                Dimensions_Volume = 160000
+                Height = 80,
+                Width = 50,
+                Depth = 40,
+                Volume = 160000
             },
             new
             {
                 Id = 3,
                 Name = "Caixa 3",
-                Dimensions_Height = 50,
-                Dimensions_Width = 80,
-                Dimensions_Depth = 60,
-                Dimensions_Volume = 240000
+                Height = 50,
+                Width = 80,
+                Depth = 60,
+                Volume = 240000
+            },
+            new
+            {
+                Id = 99,
+                Name = "null",
+                Height = 0,
+                Width = 0,
+                Depth = 0,
+                Volume = 0
             }
         );
     }

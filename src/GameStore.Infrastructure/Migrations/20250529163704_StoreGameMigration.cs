@@ -7,7 +7,7 @@
 namespace GameStore.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class StoreMigration : Migration
+    public partial class StoreGameMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,10 +19,10 @@ namespace GameStore.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Dimensions_Width = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Height = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Depth = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Volume = table.Column<int>(type: "int", nullable: true)
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    Depth = table.Column<int>(type: "int", nullable: false),
+                    Volume = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,10 +35,10 @@ namespace GameStore.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     BoxId = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Width = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Height = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Depth = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Volume = table.Column<int>(type: "int", nullable: true)
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    Depth = table.Column<int>(type: "int", nullable: false),
+                    Volume = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,10 +58,10 @@ namespace GameStore.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    Dimensions_Width = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Height = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Depth = table.Column<int>(type: "int", nullable: true),
-                    Dimensions_Volume = table.Column<int>(type: "int", nullable: true)
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    Depth = table.Column<int>(type: "int", nullable: false),
+                    Volume = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,12 +76,13 @@ namespace GameStore.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Boxes",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "Depth", "Height", "Name", "Volume", "Width" },
                 values: new object[,]
                 {
-                    { 1, "Caixa 1" },
-                    { 2, "Caixa 2" },
-                    { 3, "Caixa 3" }
+                    { 1, 80, 30, "Caixa 1", 96000, 40 },
+                    { 2, 40, 80, "Caixa 2", 160000, 50 },
+                    { 3, 60, 50, "Caixa 3", 240000, 80 },
+                    { 99, 0, 0, "null", 0, 0 }
                 });
 
             migrationBuilder.CreateIndex(

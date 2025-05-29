@@ -2,6 +2,7 @@
 using GameStore.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using GameStore.Application.DTOS.Input;
+using GameStore.Application.DTOS.Output;
 
 
 
@@ -20,15 +21,16 @@ public class OrderController : ControllerBase
         this.boxService = boxService;
     }
 
-    [HttpGet]
+    [HttpGet("Saida")]
     public async Task<IActionResult> Get()
     {
         var orders = await orderService.GetAllOrderAsync();
+        var pedidos = PedidoDTO.IsValid(orders);
         
-        return Ok(orders);
+        return Ok(pedidos);
     }
 
-    [HttpPost("Pedidos")]
+    [HttpPost("Entrada")]
     public async Task<IActionResult> Post([FromBody] InputDTO input)
     {
         try

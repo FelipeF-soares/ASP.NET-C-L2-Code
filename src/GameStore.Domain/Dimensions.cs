@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 namespace GameStore.Domain;
-[Owned]
+
 public class Dimensions
 {
     public int Width { get; set; }
