@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: GameStore.API/Dockerfile
+    ports:
+      - '8080:80'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__Default=Server=db;Database=GameStore;User=sa;Password=Root123@;TrustServerCertificate=True;
+      - ASPNETCORE_URLS=http://+:80
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: 'Root123@'
+      ACCEPT_EULA: 'Y'
+    ports:
+      - '1433:1433'
+    volumes:
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Root123@", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  sql_data:

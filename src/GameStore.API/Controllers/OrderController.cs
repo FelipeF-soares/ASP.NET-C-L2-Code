@@ -24,8 +24,7 @@ public class OrderController : ControllerBase
     [HttpGet("Saida")]
     public async Task<IActionResult> Get()
     {
-        try
-        {
+        try { 
             var orders = await orderService.GetAllOrderAsync();
             var pedidos = PedidoDTO.IsValid(orders);
 
@@ -33,9 +32,9 @@ public class OrderController : ControllerBase
         }
         catch (Exception)
         {
-            return this.StatusCode(StatusCodes
-                           .Status500InternalServerError,
-                           $"Erro ao tentar Carregar");
+          return this.StatusCode(StatusCodes
+                          .Status500InternalServerError,
+                         $"Erro ao tentar Carregar");
         }
         
     }
