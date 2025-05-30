@@ -8,23 +8,29 @@ public static class PedidoDTO
     {
         var listPedidos = new OutputDTO();
         var listPedidosDto = new List<PedidosOutputDTO>();
-        foreach(var order in orders)
+        foreach (var order in orders)
         {
             var pedido = new PedidosOutputDTO();
             pedido.pedido_id = order.OrdersId;
             var listCaixa = new List<CaixasOutputDTO>();
             var listProdutos = new List<ProdutosOutputDTO>();
 
-            foreach(var box in order.Boxes)
+            foreach (var box in order.Boxes)
             {
                 var caixaDTO = new CaixasOutputDTO();
                 
-                caixaDTO.caixa_id = box.Name;
-                foreach(var product in order.Products)
+                    caixaDTO.caixa_id = box.Name;
+                
+                
+
+                foreach (var product in order.Products)
                 {
                     var produtoDTO = new ProdutosOutputDTO();
-                    produtoDTO.Nome = product.ProductsId;
-                    listProdutos.Add(produtoDTO);
+                    if(product.BoxId == box.Id)
+                    {
+                        produtoDTO.Nome = product.ProductsId;
+                        listProdutos.Add(produtoDTO);
+                    }
                 }
                 caixaDTO.produtos = listProdutos;
                 listCaixa.Add(caixaDTO);
@@ -32,6 +38,7 @@ public static class PedidoDTO
             pedido.caixas = listCaixa;
             listPedidosDto.Add(pedido);
         }
+        
         listPedidos.pedidos = listPedidosDto;
         return listPedidos;
     }

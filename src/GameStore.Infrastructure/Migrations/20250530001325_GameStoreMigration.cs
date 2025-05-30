@@ -7,7 +7,7 @@
 namespace GameStore.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class newMigration : Migration
+    public partial class GameStoreMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -78,6 +78,7 @@ namespace GameStore.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductsId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
+                    BoxId = table.Column<int>(type: "int", nullable: true),
                     Width = table.Column<int>(type: "int", nullable: false),
                     Height = table.Column<int>(type: "int", nullable: false),
                     Depth = table.Column<int>(type: "int", nullable: false),
@@ -86,6 +87,11 @@ namespace GameStore.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_Boxes_BoxId",
+                        column: x => x.BoxId,
+                        principalTable: "Boxes",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Orders_OrderId",
                         column: x => x.OrderId,
@@ -109,6 +115,11 @@ namespace GameStore.Infrastructure.Migrations
                 name: "IX_BoxOrder_OrdersId",
                 table: "BoxOrder",
                 column: "OrdersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_BoxId",
+                table: "Products",
+                column: "BoxId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_OrderId",

@@ -34,7 +34,7 @@ public static class OrdersDTO
         foreach(var size in products)
         {
             order.Volume += size.Volume;
-            order.Width += size.Width;
+            if(order.Width < size.Width) order.Width = size.Width;
             if(order.Height < size.Height) order.Height = size.Height;
             order.Depth += size.Depth;
         }

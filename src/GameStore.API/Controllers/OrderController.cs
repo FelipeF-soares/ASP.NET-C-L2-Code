@@ -24,10 +24,20 @@ public class OrderController : ControllerBase
     [HttpGet("Saida")]
     public async Task<IActionResult> Get()
     {
-        var orders = await orderService.GetAllOrderAsync();
-        var pedidos = PedidoDTO.IsValid(orders);
+        try
+        {
+            var orders = await orderService.GetAllOrderAsync();
+            var pedidos = PedidoDTO.IsValid(orders);
+
+            return Ok(pedidos);
+        }
+        catch (Exception)
+        {
+            return this.StatusCode(StatusCodes
+                           .Status500InternalServerError,
+                           $"Erro ao tentar Carregar");
+        }
         
-        return Ok(pedidos);
     }
 
     [HttpPost("Entrada")]
@@ -37,7 +47,7 @@ public class OrderController : ControllerBase
         {
             var orders = OrdersDTO.IsValid(input);
             var ordersbox = await boxService.BoxOrder(orders);
-            foreach (var order in orders)
+            foreach (var order in ordersbox)
             {
                 await  orderService.AddOrder(order);
             }

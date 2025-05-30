@@ -9,4 +9,5 @@ namespace GameStore.Application.DTOS.Output;
 public class ProdutosOutputDTO
 {
     public string Nome { get; set; }
+    
 }

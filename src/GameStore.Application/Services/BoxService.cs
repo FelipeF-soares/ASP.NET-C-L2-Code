@@ -19,45 +19,59 @@ public class BoxService : IBoxService
     {
         try
         {
-           var boxes = await boxPersist.GetAllBoxesAsync();
+            var boxes = await boxPersist.GetAllBoxesAsync();
+            var boxDefault = await boxPersist.GetBoxByIdAsync(99);
             var listOrders = new List<Order>();
-            
+
             foreach (var order in orders)
             {
                 var listBox = new List<Box>();
                 var box = await GetBestBox(order, boxes);
-                if (box != null)
+                if (box.Id != 99)
                 {
+                    foreach(var product in order.Products)
+                    {
+                        product.BoxId = box.Id;
+                    }
                     listBox.Add(box);
                     order.Boxes = listBox;
                     listOrders.Add(order);
+
                 }
                 else
                 {
                     var itens = order.Products.Count;
                     if (itens <= 1)
                     {
-                        listBox.Add(box);
+                        listBox.Add(boxDefault);
                         order.Boxes = listBox;
                         listOrders.Add(order);
                     }
                     else
                     {
+                        
                         var firstPart = order.Products.Take(itens / 2).ToList();
                         var firstOrder = new Order();
                         firstOrder.Products = firstPart;
+                        box = await GetBestBox(firstOrder, boxes);
+                        foreach(var p in firstPart)
+                        {
+                            p.BoxId = box.Id;
+                        }
+                        listBox.Add(box);
+                        
                         var secondPart = order.Products.Skip(itens / 2).ToList();
                         var secondOrder = new Order();
-
-                        firstOrder.Products = secondPart;
-                        box = await GetBestBox(firstOrder, boxes);
-                        listBox.Add(box);
-                        order.Boxes = listBox;
-                        listOrders.Add(order);
-
+                        secondOrder.Products = secondPart;
                         box = await GetBestBox(secondOrder, boxes);
-                        listBox.Add(box);
-                        order.Boxes = listBox;
+                        foreach (var p in secondPart)
+                        {
+                            p.BoxId = box.Id;
+                        }
+                        var listbox2 = new List<Box>();
+                        listbox2.Add(box);
+                        var t = listBox.Concat(listbox2).ToList();
+                        order.Boxes = t;
                         listOrders.Add(order);
                     }
                 }
@@ -72,25 +86,23 @@ public class BoxService : IBoxService
 
     private async Task<Box> GetBestBox(Order orderDimension, Box[] boxes)
     {
-        Dimensions dimensions = new Dimensions();
-        dimensions.Width = orderDimension.Width;
-        dimensions.Height = orderDimension.Width;
-        dimensions.Depth = orderDimension.Depth;
-        dimensions.Volume = orderDimension.Volume;
+        var dimensions = CalculateOrderDimensions(orderDimension);
 
-        var emptyBox = await boxPersist.GetBoxByIdAsync(99);
         foreach (var box in boxes.OrderBy(b => b.Volume))
         {
-            Dimensions dimensionsBox = new Dimensions();
-            dimensionsBox.Width = box.Width;
-            dimensionsBox.Height = box.Width;
-            dimensionsBox.Depth = box.Depth;
-            dimensionsBox.Volume = box.Volume;
+            var boxDimensions = new Dimensions
+            {
+                Width = box.Width,
+                Height = box.Height,
+                Depth = box.Depth,
+                Volume = box.Volume
+            };
 
-            if (FitsIn(orderDimension, dimensionsBox)) return box;
-
+            if (FitsIn(dimensions, boxDimensions))
+                return box;
         }
-        return emptyBox;
+
+        return await boxPersist.GetBoxByIdAsync(99);
     }
 
     public bool FitsIn(Dimensions other, Dimensions box)
@@ -110,7 +122,17 @@ public class BoxService : IBoxService
                     p.D <= box.Depth
         );
     }
-
+    private Dimensions CalculateOrderDimensions(Order order)
+    {
+        var totalVolume = order.Products.Sum(p => p.Width * p.Height * p.Depth);
+        return new Dimensions
+        {
+            Width = order.Products.Max(p => p.Width),
+            Height = order.Products.Sum(p => p.Height),
+            Depth = order.Products.Max(p => p.Depth),
+            Volume = totalVolume
+        };
+    }
     public async Task<Box[]> GetAllBoxes()
     {
         try

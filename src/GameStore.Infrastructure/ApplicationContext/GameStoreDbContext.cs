@@ -16,7 +16,13 @@ public class GameStoreDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-       // modelBuilder.Entity<Box>().Property(order => order.Id).ValueGeneratedNever();
+        //modelBuilder.Entity<Box>().Property(order => order.Id).ValueGeneratedNever();
+
+        modelBuilder.Entity<Product>()
+                    .HasOne(p => p.Box)
+                    .WithMany(b => b.Products)
+                    .HasForeignKey(p => p.BoxId)
+                    .IsRequired(false);
 
         modelBuilder.Entity<Order>().HasMany(p => p.Products)
                                     .WithOne(p => p.Order)
