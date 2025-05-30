@@ -162,7 +162,6 @@ Trata-se de uma **API REST desenvolvida em .NET 8** que recebe uma lista de pedi
 
 ```bash
 git clone https://github.com/FelipeF-soares/ASP.NET-C-L2-Code.git
-cd nome-do-projeto
 ```
 
 2. Suba os containers da API e do banco de dados:
